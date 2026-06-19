@@ -21,7 +21,7 @@ let runtimeDependency: Target.Dependency = .product(
 
 let package = Package(
     name: "GodotAdMob",
-    platforms: [.iOS(.v14), .macOS(.v14)],
+    platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(name: "GodotAdMob", type: .dynamic, targets: ["GodotAdMob"]),
     ],
