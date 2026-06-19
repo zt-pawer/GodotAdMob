@@ -143,17 +143,17 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     @Callable
     func loadInterstitial(adUnitID: String) {
 #if os(iOS)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            // GAD completion fires on main thread — no inner dispatch needed
             GADInterstitialAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
                 guard let self else { return }
-                DispatchQueue.main.async {
-                    if let error {
-                        self.interstitial_failed.emit(error.localizedDescription)
-                    } else {
-                        self.interstitialAd = ad
-                        self.interstitialAd?.fullScreenContentDelegate = self.adDelegate
-                        self.interstitial_loaded.emit()
-                    }
+                if let msg = error?.localizedDescription {
+                    self.interstitial_failed.emit(msg)
+                } else if let ad {
+                    self.interstitialAd = ad
+                    self.interstitialAd?.fullScreenContentDelegate = self.adDelegate
+                    self.interstitial_loaded.emit()
                 }
             }
         }
@@ -181,17 +181,16 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     @Callable
     func loadRewarded(adUnitID: String) {
 #if os(iOS)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             GADRewardedAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
                 guard let self else { return }
-                DispatchQueue.main.async {
-                    if let error {
-                        self.rewarded_failed.emit(error.localizedDescription)
-                    } else {
-                        self.rewardedAd = ad
-                        self.rewardedAd?.fullScreenContentDelegate = self.adDelegate
-                        self.rewarded_loaded.emit()
-                    }
+                if let msg = error?.localizedDescription {
+                    self.rewarded_failed.emit(msg)
+                } else if let ad {
+                    self.rewardedAd = ad
+                    self.rewardedAd?.fullScreenContentDelegate = self.adDelegate
+                    self.rewarded_loaded.emit()
                 }
             }
         }
@@ -223,17 +222,16 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     @Callable
     func loadRewardedInterstitial(adUnitID: String) {
 #if os(iOS)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             GADRewardedInterstitialAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
                 guard let self else { return }
-                DispatchQueue.main.async {
-                    if let error {
-                        self.rewarded_interstitial_failed.emit(error.localizedDescription)
-                    } else {
-                        self.rewardedInterstitialAd = ad
-                        self.rewardedInterstitialAd?.fullScreenContentDelegate = self.adDelegate
-                        self.rewarded_interstitial_loaded.emit()
-                    }
+                if let msg = error?.localizedDescription {
+                    self.rewarded_interstitial_failed.emit(msg)
+                } else if let ad {
+                    self.rewardedInterstitialAd = ad
+                    self.rewardedInterstitialAd?.fullScreenContentDelegate = self.adDelegate
+                    self.rewarded_interstitial_loaded.emit()
                 }
             }
         }
@@ -265,17 +263,16 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     @Callable
     func loadAppOpen(adUnitID: String) {
 #if os(iOS)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             GADAppOpenAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
                 guard let self else { return }
-                DispatchQueue.main.async {
-                    if let error {
-                        self.app_open_failed.emit(error.localizedDescription)
-                    } else {
-                        self.appOpenAd = ad
-                        self.appOpenAd?.fullScreenContentDelegate = self.adDelegate
-                        self.app_open_loaded.emit()
-                    }
+                if let msg = error?.localizedDescription {
+                    self.app_open_failed.emit(msg)
+                } else if let ad {
+                    self.appOpenAd = ad
+                    self.appOpenAd?.fullScreenContentDelegate = self.adDelegate
+                    self.app_open_loaded.emit()
                 }
             }
         }
@@ -311,12 +308,11 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
             debug.geography = .EEA
             params.debugSettings = debug
         }
+        // UMP fires completion on main thread
         UMPConsentInformation.sharedInstance.requestConsentInfoUpdate(with: params) { [weak self] error in
             guard let self else { return }
-            DispatchQueue.main.async {
-                if let error { self.consent_info_failed.emit(error.localizedDescription) }
-                else { self.consent_info_updated.emit() }
-            }
+            if let msg = error?.localizedDescription { self.consent_info_failed.emit(msg) }
+            else { self.consent_info_updated.emit() }
         }
 #endif
     }
@@ -328,12 +324,11 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
             guard let self, let root = self.rootViewController else {
                 self?.consent_form_failed.emit("No root view controller"); return
             }
+            // UMP fires completion on main thread
             UMPConsentForm.loadAndPresentIfRequired(from: root) { [weak self] error in
                 guard let self else { return }
-                DispatchQueue.main.async {
-                    if let error { self.consent_form_failed.emit(error.localizedDescription) }
-                    else { self.consent_form_presented.emit() }
-                }
+                if let msg = error?.localizedDescription { self.consent_form_failed.emit(msg) }
+                else { self.consent_form_presented.emit() }
             }
         }
 #endif
@@ -404,51 +399,49 @@ class AdDelegate: NSObject, GADBannerViewDelegate, GADFullScreenContentDelegate 
 
     init(_ base: GodotAdMob) { self.base = base }
 
-    // Banner
+    // Banner — GAD fires delegate on main thread
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
-        DispatchQueue.main.async { self.base?.banner_loaded.emit() }
+        base?.banner_loaded.emit()
     }
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
-        DispatchQueue.main.async { self.base?.banner_failed.emit(error.localizedDescription) }
+        let msg = error.localizedDescription
+        base?.banner_failed.emit(msg)
     }
 
-    // Full screen dismissed
+    // Full screen dismissed — GAD fires on main thread
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        DispatchQueue.main.async {
-            guard let base = self.base else { return }
-            if ad is GADInterstitialAd {
-                base.interstitialAd = nil
-                base.interstitial_closed.emit()
-            } else if ad is GADRewardedAd {
-                base.rewardedAd = nil
-                base.rewarded_closed.emit()
-            } else if ad is GADAppOpenAd {
-                base.appOpenAd = nil
-                base.app_open_closed.emit()
-            } else if ad is GADRewardedInterstitialAd {
-                base.rewardedInterstitialAd = nil
-                base.rewarded_interstitial_closed.emit()
-            }
+        guard let base else { return }
+        if ad is GADInterstitialAd {
+            base.interstitialAd = nil
+            base.interstitial_closed.emit()
+        } else if ad is GADRewardedAd {
+            base.rewardedAd = nil
+            base.rewarded_closed.emit()
+        } else if ad is GADAppOpenAd {
+            base.appOpenAd = nil
+            base.app_open_closed.emit()
+        } else if ad is GADRewardedInterstitialAd {
+            base.rewardedInterstitialAd = nil
+            base.rewarded_interstitial_closed.emit()
         }
     }
 
-    // Full screen failed to present
+    // Full screen failed to present — GAD fires on main thread
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        DispatchQueue.main.async {
-            guard let base = self.base else { return }
-            if ad is GADInterstitialAd {
-                base.interstitialAd = nil
-                base.interstitial_failed.emit(error.localizedDescription)
-            } else if ad is GADRewardedAd {
-                base.rewardedAd = nil
-                base.rewarded_failed.emit(error.localizedDescription)
-            } else if ad is GADAppOpenAd {
-                base.appOpenAd = nil
-                base.app_open_failed.emit(error.localizedDescription)
-            } else if ad is GADRewardedInterstitialAd {
-                base.rewardedInterstitialAd = nil
-                base.rewarded_interstitial_failed.emit(error.localizedDescription)
-            }
+        guard let base else { return }
+        let msg = error.localizedDescription
+        if ad is GADInterstitialAd {
+            base.interstitialAd = nil
+            base.interstitial_failed.emit(msg)
+        } else if ad is GADRewardedAd {
+            base.rewardedAd = nil
+            base.rewarded_failed.emit(msg)
+        } else if ad is GADAppOpenAd {
+            base.appOpenAd = nil
+            base.app_open_failed.emit(msg)
+        } else if ad is GADRewardedInterstitialAd {
+            base.rewardedInterstitialAd = nil
+            base.rewarded_interstitial_failed.emit(msg)
         }
     }
 }
