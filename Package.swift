@@ -28,6 +28,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/migueldeicaza/SwiftGodot", revision: "f528ba67accbe3cca06c1d401c8f9d7c17022f63"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0"),
+        .package(url: "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git", from: "2.0.0"),
     ],
     targets: [
         .target(
@@ -35,7 +36,7 @@ let package = Package(
             dependencies: [
                 runtimeDependency,
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads", condition: .when(platforms: [.iOS])),
-                .product(name: "UserMessagingPlatform", package: "swift-package-manager-google-mobile-ads", condition: .when(platforms: [.iOS])),
+                .product(name: "UserMessagingPlatform", package: "swift-package-manager-google-user-messaging-platform", condition: .when(platforms: [.iOS])),
             ],
             swiftSettings: swiftSettings,
             linkerSettings: linkerSettings
