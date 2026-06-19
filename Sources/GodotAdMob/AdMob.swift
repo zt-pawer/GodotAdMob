@@ -80,7 +80,7 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     // MARK: - Banner
 
     @Callable
-    func loadBanner(adUnitID: String, position: String) {
+    func loadBanner(adUnitID: String, position: String, adaptive: Bool) {
 #if os(iOS)
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -91,7 +91,10 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
             self.bannerView?.removeFromSuperview()
             self.bannerView = nil
 
-            let banner = GADBannerView(adSize: GADAdSizeBanner)
+            let adSize = adaptive
+                ? GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(window.bounds.width)
+                : GADAdSizeBanner
+            let banner = GADBannerView(adSize: adSize)
             banner.adUnitID = adUnitID
             banner.rootViewController = root
             banner.delegate = self.adDelegate
@@ -387,6 +390,25 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     func setMuted(muted: Bool) {
 #if os(iOS)
         GADMobileAds.sharedInstance().applicationMuted = muted
+#endif
+    }
+
+    @Callable
+    func setVolume(volume: Float) {
+#if os(iOS)
+        GADMobileAds.sharedInstance().applicationVolume = volume
+#endif
+    }
+
+    @Callable
+    func presentAdInspector() {
+#if os(iOS)
+        DispatchQueue.main.async { [weak self] in
+            guard let root = self?.rootViewController else { return }
+            GADMobileAds.sharedInstance().presentAdInspector(from: root) { error in
+                if let error { print("[GodotAdMob] Ad Inspector error: \(error.localizedDescription)") }
+            }
+        }
 #endif
     }
 }

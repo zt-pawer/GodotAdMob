@@ -10,6 +10,8 @@
 
 Native Google Mobile Ads (AdMob) plugin for Godot 4 on iOS, built with Swift and [SwiftGodotRuntime](https://github.com/migueldeicaza/SwiftGodot). Supports banners, interstitials, rewarded, rewarded interstitial, app open ads, and UMP consent forms (GDPR compliance) — signals go directly to your GDScript.
 
+> **Official docs:** [Google Mobile Ads SDK for iOS](https://firebase.google.com/docs/admob/ios/quick-start)
+
 ---
 
 ## Requirements
@@ -102,6 +104,9 @@ func _on_consent_form_failed(error: String) -> void:
 func _on_banner_loaded() -> void:
     _admob.showBanner()
 
+# Call loadBanner somewhere after initialize():
+# _admob.loadBanner("ca-app-pub-xxx/yyy", "bottom", true)
+
 func _on_banner_failed(error: String) -> void:
     print("Banner failed: ", error)
 
@@ -172,7 +177,7 @@ func _on_rewarded_closed() -> void:
 
 | Method | Description |
 |--------|-------------|
-| `loadBanner(adUnitID: String, position: String)` | Load a banner ad. `position` is `"top"` or `"bottom"`. Anchored to the safe area |
+| `loadBanner(adUnitID: String, position: String, adaptive: Bool)` | Load a banner ad. `position` is `"top"` or `"bottom"`. `adaptive: true` (recommended) uses an anchored adaptive size; `false` uses the fixed 320×50 banner |
 | `showBanner()` | Show the loaded banner |
 | `hideBanner()` | Hide the banner without destroying it |
 | `destroyBanner()` | Remove the banner from the view hierarchy and free it |
@@ -221,7 +226,9 @@ func _on_rewarded_closed() -> void:
 | `setTestDeviceIDs(deviceIDs: PackedStringArray)` | Register test device IDs to receive test ads |
 | `setChildDirectedTreatment(tag: Bool)` | Enable COPPA child-directed treatment |
 | `setMaxAdContentRating(rating: String)` | Max content rating: `"g"`, `"pg"`, `"t"`, `"ma"` |
+| `setVolume(volume: Float)` | Set ad audio volume (0.0–1.0) |
 | `setMuted(muted: Bool)` | Mute/unmute ad audio |
+| `presentAdInspector()` | Open the Ad Inspector overlay for debugging (development only) |
 
 ---
 
