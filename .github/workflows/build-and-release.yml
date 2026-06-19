@@ -2,6 +2,13 @@ name: Build and Release
 
 on:
   push:
+    paths:
+      - 'Sources/**'
+      - 'Generated/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Makefile'
+      - '.github/workflows/build-and-release.yml'
 
 jobs:
   build-stub-linux-x64:
