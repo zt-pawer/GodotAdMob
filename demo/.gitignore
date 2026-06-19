@@ -1,8 +1,9 @@
 # Godot editor files
 .godot/
 
-# Export preset — contains personal team ID, bundle ID, provisioning profile
+# Export preset and output — contain personal team ID, bundle ID, built artifacts
 export_presets.cfg
+export/
 
 # Plugin binaries — install from the latest GitHub release
 addons/GodotAdMob/bin/
