@@ -227,23 +227,14 @@ func _on_rewarded_closed() -> void:
 
 ## Building from Source
 
-The CI workflow (`build-and-release.yml`) builds automatically on push using a self-hosted macOS runner and publishes a release zip.
-
-### Local build
+Requires Xcode on macOS. Before building, open the package in Xcode and share the scheme (**Product → Manage Schemes → Shared**) so `xcodebuild` can find it.
 
 ```bash
-# Requires Xcode + the shared xcscheme committed (Product → Manage Schemes → Shared)
 make build
 make dist
 ```
 
-### CI setup
-
-1. Set up a self-hosted macOS Actions runner
-2. Optionally add these secrets for signed + notarised releases:
-   - `MACOS_CERTIFICATE`, `MACOS_CERTIFICATE_PASSWORD`, `KEYCHAIN_PASSWORD`
-   - `APPLE_ID`, `APPLE_ID_PASSWORD`, `APPLE_TEAM_ID`
-3. Push to `main` — the workflow builds iOS/macOS xcframeworks + Linux/Windows stubs and publishes a release zip
+`make build` compiles xcframeworks for iOS, iOS Simulator, and macOS. `make dist` assembles the `addons/` folder ready to drop into your Godot project.
 
 ---
 
