@@ -22,208 +22,301 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
-offset_left = 20.0
-offset_right = -20.0
+theme_override_constants/separation = 16
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 16.0
 
 [node name="TitleLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 text = "GodotAdMob Demo"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "Status: Ready"
 horizontal_alignment = 1
+autowrap_mode = 2
 
-[node name="HSepConsent" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="ConsentCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ConsentLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="ConsentVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ConsentCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="ConsentTitle" type="Label" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "UMP Consent"
-horizontal_alignment = 1
 
-[node name="ConsentStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="ConsentStatus" type="Label" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "Consent: Unknown"
-horizontal_alignment = 1
+autowrap_mode = 2
 
-[node name="HBoxConsent" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="ConsentButtons" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
 
-[node name="RequestConsent" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+[node name="RequestConsent" type="Button" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Request"
 
-[node name="ShowConsentForm" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+[node name="ShowConsentForm" type="Button" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Show Form"
 
-[node name="ResetConsent" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+[node name="ResetConsent" type="Button" parent="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Reset"
 
-[node name="HSepBanner" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="BannerCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="BannerLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="BannerVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/BannerCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="BannerTitle" type="Label" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Banner"
-horizontal_alignment = 1
 
-[node name="BannerStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="BannerStatus" type="Label" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox"]
 layout_mode = 2
-text = "Banner: Idle"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = "Status: Idle"
+autowrap_mode = 2
 
-[node name="HBoxBanner" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="BannerButtons" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
 
-[node name="LoadBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+[node name="LoadBanner" type="Button" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Load"
 
-[node name="ShowBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+[node name="ShowBanner" type="Button" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Show"
 
-[node name="HideBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+[node name="HideBanner" type="Button" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Hide"
 
-[node name="DestroyBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+[node name="DestroyBanner" type="Button" parent="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Destroy"
 
-[node name="HSepInterstitial" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="InterstitialCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="InterstitialLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="InterstitialVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/InterstitialCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="InterstitialTitle" type="Label" parent="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Interstitial"
-horizontal_alignment = 1
 
-[node name="InterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="InterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox"]
 layout_mode = 2
-text = "Interstitial: Idle"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = "Status: Idle"
+autowrap_mode = 2
 
-[node name="HBoxInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="HBoxInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
 
-[node name="LoadInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxInterstitial"]
+[node name="LoadInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox/HBoxInterstitial"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Load"
 
-[node name="ShowInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxInterstitial"]
+[node name="ShowInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox/HBoxInterstitial"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Show"
 
-[node name="HSepRewarded" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="RewardedLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/RewardedCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="RewardedTitle" type="Label" parent="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Rewarded"
-horizontal_alignment = 1
 
-[node name="RewardedStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedStatus" type="Label" parent="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox"]
 layout_mode = 2
-text = "Rewarded: Idle"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = "Status: Idle"
+autowrap_mode = 2
 
-[node name="HBoxRewarded" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="HBoxRewarded" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
 
-[node name="LoadRewarded" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewarded"]
+[node name="LoadRewarded" type="Button" parent="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox/HBoxRewarded"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Load"
 
-[node name="ShowRewarded" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewarded"]
+[node name="ShowRewarded" type="Button" parent="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox/HBoxRewarded"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Show"
 
-[node name="HSepRewardedInterstitial" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedInterstitialCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="RewardedInterstitialLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedInterstitialVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="RewardedInterstitialTitle" type="Label" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Rewarded Interstitial"
-horizontal_alignment = 1
 
-[node name="RewardedInterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="RewardedInterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox"]
 layout_mode = 2
-text = "Rewarded Interstitial: Idle"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = "Status: Idle"
+autowrap_mode = 2
 
-[node name="HBoxRewardedInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="HBoxRewardedInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 8
 
-[node name="LoadRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial"]
+[node name="LoadRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox/HBoxRewardedInterstitial"]
 layout_mode = 2
-text = "Load"
-
-[node name="ShowRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial"]
-layout_mode = 2
-text = "Show"
-
-[node name="HSepAppOpen" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="AppOpenLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
 theme_override_font_sizes/font_size = 16
-text = "App Open"
-horizontal_alignment = 1
-
-[node name="AppOpenStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
-text = "App Open: Idle"
-horizontal_alignment = 1
-
-[node name="HBoxAppOpen" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-theme_override_constants/separation = 8
-
-[node name="LoadAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/HBoxAppOpen"]
-layout_mode = 2
 text = "Load"
 
-[node name="ShowAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/HBoxAppOpen"]
+[node name="ShowRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox/HBoxRewardedInterstitial"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
 text = "Show"
 
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/RequestConsent" to="." method="_on_request_consent_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/ShowConsentForm" to="." method="_on_show_consent_form_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/ResetConsent" to="." method="_on_reset_consent_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/LoadBanner" to="." method="_on_load_banner_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/ShowBanner" to="." method="_on_show_banner_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/HideBanner" to="." method="_on_hide_banner_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/DestroyBanner" to="." method="_on_destroy_banner_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxInterstitial/LoadInterstitial" to="." method="_on_load_interstitial_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxInterstitial/ShowInterstitial" to="." method="_on_show_interstitial_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewarded/LoadRewarded" to="." method="_on_load_rewarded_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewarded/ShowRewarded" to="." method="_on_show_rewarded_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial/LoadRewardedInterstitial" to="." method="_on_load_rewarded_interstitial_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial/ShowRewardedInterstitial" to="." method="_on_show_rewarded_interstitial_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxAppOpen/LoadAppOpen" to="." method="_on_load_app_open_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxAppOpen/ShowAppOpen" to="." method="_on_show_app_open_pressed"]
+[node name="AppOpenCard" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AppOpenVBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/AppOpenCard"]
+layout_mode = 2
+theme_override_constants/separation = 10
+offset_left = 16.0
+offset_right = -16.0
+offset_top = 14.0
+offset_bottom = -14.0
+
+[node name="AppOpenTitle" type="Label" parent="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "App Open"
+
+[node name="AppOpenStatus" type="Label" parent="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Status: Idle"
+autowrap_mode = 2
+
+[node name="HBoxAppOpen" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LoadAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox/HBoxAppOpen"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
+text = "Load"
+
+[node name="ShowAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox/HBoxAppOpen"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 16
+text = "Show"
+
+[node name="Spacer" type="Control" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons/RequestConsent" to="." method="_on_request_consent_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons/ShowConsentForm" to="." method="_on_show_consent_form_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/ConsentCard/ConsentVBox/ConsentButtons/ResetConsent" to="." method="_on_reset_consent_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons/LoadBanner" to="." method="_on_load_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons/ShowBanner" to="." method="_on_show_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons/HideBanner" to="." method="_on_hide_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/BannerCard/BannerVBox/BannerButtons/DestroyBanner" to="." method="_on_destroy_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox/HBoxInterstitial/LoadInterstitial" to="." method="_on_load_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/InterstitialCard/InterstitialVBox/HBoxInterstitial/ShowInterstitial" to="." method="_on_show_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox/HBoxRewarded/LoadRewarded" to="." method="_on_load_rewarded_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/RewardedCard/RewardedVBox/HBoxRewarded/ShowRewarded" to="." method="_on_show_rewarded_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox/HBoxRewardedInterstitial/LoadRewardedInterstitial" to="." method="_on_load_rewarded_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/RewardedInterstitialCard/RewardedInterstitialVBox/HBoxRewardedInterstitial/ShowRewardedInterstitial" to="." method="_on_show_rewarded_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox/HBoxAppOpen/LoadAppOpen" to="." method="_on_load_app_open_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/AppOpenCard/AppOpenVBox/HBoxAppOpen/ShowAppOpen" to="." method="_on_show_app_open_pressed"]
