@@ -2,19 +2,19 @@ extends Node
 
 var _admob: Object
 
-@onready var status_label: Label = $VBoxContainer/StatusLabel
-@onready var consent_status: Label = $VBoxContainer/ConsentStatus
-@onready var banner_status: Label = $VBoxContainer/BannerStatus
-@onready var interstitial_status: Label = $VBoxContainer/InterstitialStatus
-@onready var rewarded_status: Label = $VBoxContainer/RewardedStatus
-@onready var rewarded_interstitial_status: Label = $VBoxContainer/RewardedInterstitialStatus
-@onready var app_open_status: Label = $VBoxContainer/AppOpenStatus
+@onready var status_label: Label = $ScrollContainer/VBoxContainer/StatusLabel
+@onready var consent_status: Label = $ScrollContainer/VBoxContainer/ConsentStatus
+@onready var banner_status: Label = $ScrollContainer/VBoxContainer/BannerStatus
+@onready var interstitial_status: Label = $ScrollContainer/VBoxContainer/InterstitialStatus
+@onready var rewarded_status: Label = $ScrollContainer/VBoxContainer/RewardedStatus
+@onready var rewarded_interstitial_status: Label = $ScrollContainer/VBoxContainer/RewardedInterstitialStatus
+@onready var app_open_status: Label = $ScrollContainer/VBoxContainer/AppOpenStatus
 
-@onready var show_banner_btn: Button = $VBoxContainer/HBoxBanner/ShowBanner
-@onready var show_interstitial_btn: Button = $VBoxContainer/HBoxInterstitial/ShowInterstitial
-@onready var show_rewarded_btn: Button = $VBoxContainer/HBoxRewarded/ShowRewarded
-@onready var show_rewarded_interstitial_btn: Button = $VBoxContainer/HBoxRewardedInterstitial/ShowRewardedInterstitial
-@onready var show_app_open_btn: Button = $VBoxContainer/HBoxAppOpen/ShowAppOpen
+@onready var show_banner_btn: Button = $ScrollContainer/VBoxContainer/HBoxBanner/ShowBanner
+@onready var show_interstitial_btn: Button = $ScrollContainer/VBoxContainer/HBoxInterstitial/ShowInterstitial
+@onready var show_rewarded_btn: Button = $ScrollContainer/VBoxContainer/HBoxRewarded/ShowRewarded
+@onready var show_rewarded_interstitial_btn: Button = $ScrollContainer/VBoxContainer/HBoxRewardedInterstitial/ShowRewardedInterstitial
+@onready var show_app_open_btn: Button = $ScrollContainer/VBoxContainer/HBoxAppOpen/ShowAppOpen
 
 # Google test Ad Unit IDs
 const BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/2934735716"
