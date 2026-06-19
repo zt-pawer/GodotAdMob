@@ -1,0 +1,229 @@
+[gd_scene load_steps=2 format=3 uid="uid://admob_demo_main"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_main"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+offset_left = 20.0
+offset_right = -20.0
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "GodotAdMob Demo"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Status: Ready"
+horizontal_alignment = 1
+
+[node name="HSepConsent" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ConsentLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "UMP Consent"
+horizontal_alignment = 1
+
+[node name="ConsentStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Consent: Unknown"
+horizontal_alignment = 1
+
+[node name="HBoxConsent" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="RequestConsent" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+layout_mode = 2
+text = "Request"
+
+[node name="ShowConsentForm" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+layout_mode = 2
+text = "Show Form"
+
+[node name="ResetConsent" type="Button" parent="ScrollContainer/VBoxContainer/HBoxConsent"]
+layout_mode = 2
+text = "Reset"
+
+[node name="HSepBanner" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BannerLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Banner"
+horizontal_alignment = 1
+
+[node name="BannerStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Banner: Idle"
+horizontal_alignment = 1
+
+[node name="HBoxBanner" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="LoadBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+layout_mode = 2
+text = "Load"
+
+[node name="ShowBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+layout_mode = 2
+text = "Show"
+
+[node name="HideBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+layout_mode = 2
+text = "Hide"
+
+[node name="DestroyBanner" type="Button" parent="ScrollContainer/VBoxContainer/HBoxBanner"]
+layout_mode = 2
+text = "Destroy"
+
+[node name="HSepInterstitial" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InterstitialLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Interstitial"
+horizontal_alignment = 1
+
+[node name="InterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Interstitial: Idle"
+horizontal_alignment = 1
+
+[node name="HBoxInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="LoadInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxInterstitial"]
+layout_mode = 2
+text = "Load"
+
+[node name="ShowInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxInterstitial"]
+layout_mode = 2
+text = "Show"
+
+[node name="HSepRewarded" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RewardedLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Rewarded"
+horizontal_alignment = 1
+
+[node name="RewardedStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Rewarded: Idle"
+horizontal_alignment = 1
+
+[node name="HBoxRewarded" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="LoadRewarded" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewarded"]
+layout_mode = 2
+text = "Load"
+
+[node name="ShowRewarded" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewarded"]
+layout_mode = 2
+text = "Show"
+
+[node name="HSepRewardedInterstitial" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RewardedInterstitialLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Rewarded Interstitial"
+horizontal_alignment = 1
+
+[node name="RewardedInterstitialStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Rewarded Interstitial: Idle"
+horizontal_alignment = 1
+
+[node name="HBoxRewardedInterstitial" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="LoadRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial"]
+layout_mode = 2
+text = "Load"
+
+[node name="ShowRewardedInterstitial" type="Button" parent="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial"]
+layout_mode = 2
+text = "Show"
+
+[node name="HSepAppOpen" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AppOpenLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "App Open"
+horizontal_alignment = 1
+
+[node name="AppOpenStatus" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "App Open: Idle"
+horizontal_alignment = 1
+
+[node name="HBoxAppOpen" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="LoadAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/HBoxAppOpen"]
+layout_mode = 2
+text = "Load"
+
+[node name="ShowAppOpen" type="Button" parent="ScrollContainer/VBoxContainer/HBoxAppOpen"]
+layout_mode = 2
+text = "Show"
+
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/RequestConsent" to="." method="_on_request_consent_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/ShowConsentForm" to="." method="_on_show_consent_form_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxConsent/ResetConsent" to="." method="_on_reset_consent_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/LoadBanner" to="." method="_on_load_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/ShowBanner" to="." method="_on_show_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/HideBanner" to="." method="_on_hide_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxBanner/DestroyBanner" to="." method="_on_destroy_banner_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxInterstitial/LoadInterstitial" to="." method="_on_load_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxInterstitial/ShowInterstitial" to="." method="_on_show_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewarded/LoadRewarded" to="." method="_on_load_rewarded_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewarded/ShowRewarded" to="." method="_on_show_rewarded_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial/LoadRewardedInterstitial" to="." method="_on_load_rewarded_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxRewardedInterstitial/ShowRewardedInterstitial" to="." method="_on_show_rewarded_interstitial_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxAppOpen/LoadAppOpen" to="." method="_on_load_app_open_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxAppOpen/ShowAppOpen" to="." method="_on_show_app_open_pressed"]

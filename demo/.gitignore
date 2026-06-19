@@ -1,0 +1,6 @@
+# Godot editor files
+.godot/
+
+# Plugin binaries — install from the latest GitHub release
+addons/GodotAdMob/bin/
+addons/GodotApplePluginsRuntime/bin/

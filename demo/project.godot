@@ -1,0 +1,13 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the properties are written in a specific format.
+
+[application]
+
+config/name="GodotAdMob Demo"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.3", "Forward Mobile")
+
+[rendering]
+
+renderer/rendering_method="mobile"
