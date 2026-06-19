@@ -1,0 +1,24 @@
+# Swift Package Manager
+.build/
+.xcodebuild/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+.swiftpm/xcode/xcuserdata/
+.swiftpm/xcode/package.xcworkspace/xcuserdata/
+
+# Build artifacts
+dist/
+.tmp/
+
+# macOS
+.DS_Store
+
+# Godot editor artifacts
+.godot/
+.import/
+
+# VSCode
+.vscode/
+
+# Binaries checked in to bin/ are intentional (xcframework, stubs).
+# Do not add addons/GodotAdMob/bin/ to this file.
