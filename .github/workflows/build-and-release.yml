@@ -232,17 +232,13 @@ jobs:
           XCODEBUILD_LOG_ON_ERROR: 1
           XCODEBUILD_LOG_DIR: ${{ runner.temp }}
         run: |
-          x86_xcodebuild="xcodebuild"
-          if [ "$(uname -m)" = "arm64" ]; then
-            if ! arch -x86_64 /usr/bin/true 2>/dev/null; then
-              echo "Rosetta is required to build macOS x86_64 on this arm64 runner" >&2
-              exit 1
-            fi
-            x86_xcodebuild="arch -x86_64 xcodebuild"
-          fi
+          # Run xcodebuild natively (arm64) so Swift compiler plugins resolve correctly
+          # under Xcode 26 / Swift 6.2 where SwiftCompilerPlugin is a built-in host module
+          # and is not available when the toolchain runs as x86_64 via arch -x86_64.
+          # ARCHS/VALID_ARCHS cross-compile only the framework binary to x86_64.
           caffeinate -dimsu make build \
             DESTINATIONS="platform=macOS,arch=x86_64" \
-            XCODEBUILD="$x86_xcodebuild"
+            XCODEBUILD_SETTINGS="CODE_SIGNING_ALLOWED=NO OTHER_LDFLAGS=-Wl,-headerpad_max_install_names ARCHS=x86_64 VALID_ARCHS=x86_64"
 
       - name: Assemble addons
         run: caffeinate -dimsu make dist
