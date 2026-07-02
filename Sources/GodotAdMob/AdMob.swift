@@ -48,6 +48,7 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
     var appOpenAd: GADAppOpenAd?
     var adDelegate: AdDelegate?
     var testDeviceIDs: [String] = []
+    var pendingSSVCustomData: String = "" // Nonce set by GDScript before showRewarded()
 
     var rootViewController: UIViewController? {
         UIApplication.shared.connectedScenes
@@ -200,6 +201,16 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
 #endif
     }
 
+    // setRewardedCustomData must be called before showRewarded().
+    // The customData string (client nonce) is sent to AdMob as SSV customRewardString,
+    // which arrives at our /AdmobSSV endpoint as the `custom_data` query param.
+    @Callable
+    func setRewardedCustomData(customData: String) {
+#if os(iOS)
+        pendingSSVCustomData = customData
+#endif
+    }
+
     @Callable
     func showRewarded() {
 #if os(iOS)
@@ -210,6 +221,12 @@ class GodotAdMob: RefCounted, @unchecked Sendable {
             }
             guard let root = self.rootViewController else {
                 self.rewarded_failed.emit("No root view controller"); return
+            }
+            if !self.pendingSSVCustomData.isEmpty {
+                let opts = GADServerSideVerificationOptions()
+                opts.customRewardString = self.pendingSSVCustomData
+                ad.serverSideVerificationOptions = opts
+                self.pendingSSVCustomData = ""
             }
             ad.present(fromRootViewController: root) { [weak self] in
                 guard let self else { return }
