@@ -7,7 +7,7 @@ import UserMessagingPlatform
 #endif
 
 @Godot
-class GodotAdMob: RefCounted, @unchecked Sendable {
+class GodotAdMob: Object, @unchecked Sendable {
 
     // MARK: - Signals
 

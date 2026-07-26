@@ -18,9 +18,16 @@ public let godotAdMobMinimumInitializationLevel = minimumInitializationLevel(
 
 public func godotAdMobInitialize(level: ExtensionInitializationLevel) {
     godotAdMobTypes[level]?.forEach(register)
+    if level == .scene {
+        Engine.registerSingleton(name: StringName("GodotAdMob"), instance: GodotAdMob())
+    }
 }
 
 public func godotAdMobDeinitialize(level: ExtensionInitializationLevel) {
+    if level == .scene, let instance = Engine.getSingleton(name: StringName("GodotAdMob")) {
+        Engine.unregisterSingleton(name: StringName("GodotAdMob"))
+        instance.free()
+    }
     godotAdMobTypes[level]?.reversed().forEach(unregister)
 }
 
