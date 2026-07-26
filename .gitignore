@@ -20,5 +20,11 @@ dist/
 # VSCode
 .vscode/
 
+# Demo
+addons/GodotAdMob/bin/
+
+# Others
+docs/
+
 # Binaries checked in to bin/ are intentional (xcframework, stubs).
 # Do not add addons/GodotAdMob/bin/ to this file.
