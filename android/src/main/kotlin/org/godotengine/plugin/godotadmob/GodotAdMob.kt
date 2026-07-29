@@ -1,7 +1,34 @@
 package org.godotengine.plugin.godotadmob
 
 import android.util.Log
-import org.godotengine.godot.Dictionary
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
+import com.google.android.ump.ConsentDebugSettings
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.FormError
+import com.google.android.ump.UserMessagingPlatform
 import org.godotengine.godot.Godot
 import org.godotengine.godot.plugin.GodotPlugin
 import org.godotengine.godot.plugin.SignalInfo
@@ -9,11 +36,6 @@ import org.godotengine.godot.plugin.UsedByGodot
 
 private const val TAG = "GodotAdMob"
 
-// Walking skeleton: every method below is a stub (log + emit the matching
-// `_failed` signal, or a safe default for getters) that proves the Kotlin
-// GodotPlugin is reachable via Engine.get_singleton("GodotAdMob") through the
-// full native-shim + AAR path. Real Google Mobile Ads/UMP logic is a
-// follow-up PR (see the Android support tracking issue).
 class GodotAdMob(godot: Godot) : GodotPlugin(godot) {
 
     companion object {
@@ -37,12 +59,15 @@ class GodotAdMob(godot: Godot) : GodotPlugin(godot) {
 
         SignalInfo("rewarded_loaded"),
         SignalInfo("rewarded_failed", String::class.java),
-        SignalInfo("rewarded_earned", String::class.java, Int::class.java),
+        // Int::class.javaObjectType (java.lang.Integer), not Int::class.java (primitive int):
+        // emitSignal()'s isInstance() check against a primitive Class always returns false
+        // since vararg args are boxed at the call site.
+        SignalInfo("rewarded_earned", String::class.java, Int::class.javaObjectType),
         SignalInfo("rewarded_closed"),
 
         SignalInfo("rewarded_interstitial_loaded"),
         SignalInfo("rewarded_interstitial_failed", String::class.java),
-        SignalInfo("rewarded_interstitial_earned", String::class.java, Int::class.java),
+        SignalInfo("rewarded_interstitial_earned", String::class.java, Int::class.javaObjectType),
         SignalInfo("rewarded_interstitial_closed"),
 
         SignalInfo("app_open_loaded"),
@@ -55,155 +80,469 @@ class GodotAdMob(godot: Godot) : GodotPlugin(godot) {
         SignalInfo("consent_form_failed", String::class.java),
     )
 
-    private fun stub(method: String) {
-        Log.w(TAG, "$method() is a stub on Android — real ad logic lands in a follow-up PR")
-    }
+    private var bannerView: AdView? = null
+    private var bannerContainer: FrameLayout? = null
+    private var interstitialAd: InterstitialAd? = null
+    private var rewardedAd: RewardedAd? = null
+    private var rewardedInterstitialAd: RewardedInterstitialAd? = null
+    private var appOpenAd: AppOpenAd? = null
+    private var testDeviceIDs: List<String> = emptyList()
+    private var pendingSSVCustomData: String = "" // Set by GDScript before showRewarded()
 
     // --- Lifecycle ---
 
     @UsedByGodot
     fun initialize() {
-        stub("initialize")
+        val activity = getActivity() ?: return
+        runOnHostThread {
+            MobileAds.initialize(activity) {}
+        }
     }
 
     // --- Banner ---
 
     @UsedByGodot
     fun loadBanner(adUnitID: String, position: String, adaptive: Boolean) {
-        stub("loadBanner")
-        emitSignal("banner_failed", "Android ad loading not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("banner_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            destroyBannerInternal()
+
+            val adSize = if (adaptive) {
+                val metrics = activity.resources.displayMetrics
+                val widthDp = (metrics.widthPixels / metrics.density).toInt()
+                AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, widthDp)
+            } else {
+                AdSize.BANNER
+            }
+
+            val adView = AdView(activity)
+            adView.adUnitId = adUnitID
+            adView.setAdSize(adSize)
+            adView.visibility = View.INVISIBLE
+            adView.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    emitSignal("banner_loaded")
+                }
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    emitSignal("banner_failed", error.message)
+                }
+            }
+            bannerView = adView
+
+            val container = FrameLayout(activity)
+            val gravity = if (position == "top") {
+                Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            } else {
+                Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            }
+            container.addView(
+                adView,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    gravity,
+                ),
+            )
+            bannerContainer = container
+
+            val contentView = activity.findViewById<ViewGroup>(android.R.id.content)
+            contentView.addView(
+                container,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                ),
+            )
+
+            adView.loadAd(AdRequest.Builder().build())
+        }
     }
 
     @UsedByGodot
     fun showBanner() {
-        stub("showBanner")
+        runOnHostThread { bannerView?.visibility = View.VISIBLE }
     }
 
     @UsedByGodot
     fun hideBanner() {
-        stub("hideBanner")
+        runOnHostThread { bannerView?.visibility = View.INVISIBLE }
     }
 
     @UsedByGodot
     fun destroyBanner() {
-        stub("destroyBanner")
+        runOnHostThread { destroyBannerInternal() }
+    }
+
+    private fun destroyBannerInternal() {
+        bannerContainer?.let { container -> (container.parent as? ViewGroup)?.removeView(container) }
+        bannerView?.destroy()
+        bannerView = null
+        bannerContainer = null
     }
 
     // --- Interstitial ---
 
     @UsedByGodot
     fun loadInterstitial(adUnitID: String) {
-        stub("loadInterstitial")
-        emitSignal("interstitial_failed", "Android ad loading not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("interstitial_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            InterstitialAd.load(
+                activity,
+                adUnitID,
+                AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        interstitialAd = ad
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                interstitialAd = null
+                                emitSignal("interstitial_closed")
+                            }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                interstitialAd = null
+                                emitSignal("interstitial_failed", adError.message)
+                            }
+                        }
+                        emitSignal("interstitial_loaded")
+                    }
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        emitSignal("interstitial_failed", error.message)
+                    }
+                },
+            )
+        }
     }
 
     @UsedByGodot
     fun showInterstitial() {
-        stub("showInterstitial")
-        emitSignal("interstitial_failed", "No interstitial ad loaded")
+        val ad = interstitialAd
+        val activity = getActivity()
+        if (ad == null) {
+            emitSignal("interstitial_failed", "No interstitial ad loaded")
+            return
+        }
+        if (activity == null) {
+            emitSignal("interstitial_failed", "No activity found")
+            return
+        }
+        runOnHostThread { ad.show(activity) }
     }
 
     // --- Rewarded ---
 
     @UsedByGodot
     fun loadRewarded(adUnitID: String) {
-        stub("loadRewarded")
-        emitSignal("rewarded_failed", "Android ad loading not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("rewarded_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            RewardedAd.load(
+                activity,
+                adUnitID,
+                AdRequest.Builder().build(),
+                object : RewardedAdLoadCallback() {
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        rewardedAd = ad
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                rewardedAd = null
+                                emitSignal("rewarded_closed")
+                            }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                rewardedAd = null
+                                emitSignal("rewarded_failed", adError.message)
+                            }
+                        }
+                        emitSignal("rewarded_loaded")
+                    }
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        emitSignal("rewarded_failed", error.message)
+                    }
+                },
+            )
+        }
     }
 
+    // setRewardedCustomData must be called before showRewarded(). The customData string
+    // (client nonce) is sent to AdMob as SSV custom_data, arriving at the verification
+    // endpoint as the `custom_data` query param.
     @UsedByGodot
     fun setRewardedCustomData(customData: String) {
-        stub("setRewardedCustomData")
+        pendingSSVCustomData = customData
     }
 
     @UsedByGodot
     fun showRewarded() {
-        stub("showRewarded")
-        emitSignal("rewarded_failed", "No rewarded ad loaded")
+        val ad = rewardedAd
+        val activity = getActivity()
+        if (ad == null) {
+            emitSignal("rewarded_failed", "No rewarded ad loaded")
+            return
+        }
+        if (activity == null) {
+            emitSignal("rewarded_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            if (pendingSSVCustomData.isNotEmpty()) {
+                ad.setServerSideVerificationOptions(
+                    ServerSideVerificationOptions.Builder().setCustomData(pendingSSVCustomData).build(),
+                )
+                pendingSSVCustomData = ""
+            }
+            ad.show(activity) { rewardItem: RewardItem ->
+                emitSignal("rewarded_earned", rewardItem.type, rewardItem.amount)
+            }
+        }
     }
 
     // --- Rewarded Interstitial ---
 
     @UsedByGodot
     fun loadRewardedInterstitial(adUnitID: String) {
-        stub("loadRewardedInterstitial")
-        emitSignal("rewarded_interstitial_failed", "Android ad loading not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("rewarded_interstitial_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            RewardedInterstitialAd.load(
+                activity,
+                adUnitID,
+                AdRequest.Builder().build(),
+                object : RewardedInterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: RewardedInterstitialAd) {
+                        rewardedInterstitialAd = ad
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                rewardedInterstitialAd = null
+                                emitSignal("rewarded_interstitial_closed")
+                            }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                rewardedInterstitialAd = null
+                                emitSignal("rewarded_interstitial_failed", adError.message)
+                            }
+                        }
+                        emitSignal("rewarded_interstitial_loaded")
+                    }
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        emitSignal("rewarded_interstitial_failed", error.message)
+                    }
+                },
+            )
+        }
     }
 
     @UsedByGodot
     fun showRewardedInterstitial() {
-        stub("showRewardedInterstitial")
-        emitSignal("rewarded_interstitial_failed", "No rewarded interstitial ad loaded")
+        val ad = rewardedInterstitialAd
+        val activity = getActivity()
+        if (ad == null) {
+            emitSignal("rewarded_interstitial_failed", "No rewarded interstitial ad loaded")
+            return
+        }
+        if (activity == null) {
+            emitSignal("rewarded_interstitial_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            ad.show(activity) { rewardItem: RewardItem ->
+                emitSignal("rewarded_interstitial_earned", rewardItem.type, rewardItem.amount)
+            }
+        }
     }
 
     // --- App Open ---
 
     @UsedByGodot
     fun loadAppOpen(adUnitID: String) {
-        stub("loadAppOpen")
-        emitSignal("app_open_failed", "Android ad loading not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("app_open_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            AppOpenAd.load(
+                activity,
+                adUnitID,
+                AdRequest.Builder().build(),
+                object : AppOpenAd.AppOpenAdLoadCallback() {
+                    override fun onAdLoaded(ad: AppOpenAd) {
+                        appOpenAd = ad
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                appOpenAd = null
+                                emitSignal("app_open_closed")
+                            }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                appOpenAd = null
+                                emitSignal("app_open_failed", adError.message)
+                            }
+                        }
+                        emitSignal("app_open_loaded")
+                    }
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        emitSignal("app_open_failed", error.message)
+                    }
+                },
+            )
+        }
     }
 
     @UsedByGodot
     fun showAppOpen() {
-        stub("showAppOpen")
-        emitSignal("app_open_failed", "No app open ad loaded")
+        val ad = appOpenAd
+        val activity = getActivity()
+        if (ad == null) {
+            emitSignal("app_open_failed", "No app open ad loaded")
+            return
+        }
+        if (activity == null) {
+            emitSignal("app_open_failed", "No activity found")
+            return
+        }
+        runOnHostThread { ad.show(activity) }
     }
 
     // --- Consent ---
 
     @UsedByGodot
     fun requestConsentInfoUpdate(underAgeOfConsent: Boolean) {
-        stub("requestConsentInfoUpdate")
-        emitSignal("consent_info_failed", "Android consent flow not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("consent_info_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            val paramsBuilder = ConsentRequestParameters.Builder()
+                .setTagForUnderAgeOfConsent(underAgeOfConsent)
+            if (testDeviceIDs.isNotEmpty()) {
+                val debugSettings = ConsentDebugSettings.Builder(activity)
+                    .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                testDeviceIDs.forEach { debugSettings.addTestDeviceHashedId(it) }
+                paramsBuilder.setConsentDebugSettings(debugSettings.build())
+            }
+            UserMessagingPlatform.getConsentInformation(activity).requestConsentInfoUpdate(
+                activity,
+                paramsBuilder.build(),
+                { emitSignal("consent_info_updated") },
+                { error: FormError -> emitSignal("consent_info_failed", error.message) },
+            )
+        }
     }
 
     @UsedByGodot
     fun loadAndPresentConsentForm() {
-        stub("loadAndPresentConsentForm")
-        emitSignal("consent_form_failed", "Android consent flow not implemented yet")
+        val activity = getActivity()
+        if (activity == null) {
+            emitSignal("consent_form_failed", "No activity found")
+            return
+        }
+        runOnHostThread {
+            UserMessagingPlatform.loadConsentForm(
+                activity,
+                { form: ConsentForm ->
+                    val status = UserMessagingPlatform.getConsentInformation(activity).consentStatus
+                    if (status == ConsentInformation.ConsentStatus.REQUIRED) {
+                        form.show(activity) { dismissError: FormError? ->
+                            if (dismissError != null) {
+                                emitSignal("consent_form_failed", dismissError.message)
+                            } else {
+                                emitSignal("consent_form_presented")
+                            }
+                        }
+                    } else {
+                        emitSignal("consent_form_presented")
+                    }
+                },
+                { error: FormError -> emitSignal("consent_form_failed", error.message) },
+            )
+        }
     }
 
     @UsedByGodot
     fun canRequestAds(): Boolean {
-        stub("canRequestAds")
-        return false
+        val activity = getActivity() ?: return false
+        return UserMessagingPlatform.getConsentInformation(activity).canRequestAds()
     }
 
     @UsedByGodot
     fun resetConsent() {
-        stub("resetConsent")
+        val activity = getActivity() ?: return
+        UserMessagingPlatform.getConsentInformation(activity).reset()
     }
 
     // --- Config ---
 
     @UsedByGodot
     fun setTestDeviceIDs(deviceIDs: Array<String>) {
-        stub("setTestDeviceIDs")
+        testDeviceIDs = deviceIDs.toList()
+        updateRequestConfiguration { setTestDeviceIds(testDeviceIDs) }
     }
 
     @UsedByGodot
     fun setChildDirectedTreatment(tag: Boolean) {
-        stub("setChildDirectedTreatment")
+        updateRequestConfiguration {
+            setTagForChildDirectedTreatment(
+                if (tag) {
+                    RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE
+                } else {
+                    RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_FALSE
+                },
+            )
+        }
     }
 
     @UsedByGodot
     fun setMaxAdContentRating(rating: String) {
-        stub("setMaxAdContentRating")
+        val value = when (rating.lowercase()) {
+            "g" -> RequestConfiguration.MAX_AD_CONTENT_RATING_G
+            "pg" -> RequestConfiguration.MAX_AD_CONTENT_RATING_PG
+            "t" -> RequestConfiguration.MAX_AD_CONTENT_RATING_T
+            "ma" -> RequestConfiguration.MAX_AD_CONTENT_RATING_MA
+            else -> return
+        }
+        updateRequestConfiguration { setMaxAdContentRating(value) }
+    }
+
+    private fun updateRequestConfiguration(block: RequestConfiguration.Builder.() -> Unit) {
+        val current = MobileAds.getRequestConfiguration()
+        val builder = RequestConfiguration.Builder()
+            .setTestDeviceIds(current.testDeviceIds)
+            .setTagForChildDirectedTreatment(current.tagForChildDirectedTreatment)
+            .setTagForUnderAgeOfConsent(current.tagForUnderAgeOfConsent)
+            .setMaxAdContentRating(current.maxAdContentRating)
+        builder.block()
+        MobileAds.setRequestConfiguration(builder.build())
     }
 
     @UsedByGodot
     fun setMuted(muted: Boolean) {
-        stub("setMuted")
+        MobileAds.setAppMuted(muted)
     }
 
     @UsedByGodot
     fun setVolume(volume: Float) {
-        stub("setVolume")
+        MobileAds.setAppVolume(volume)
     }
 
     @UsedByGodot
     fun presentAdInspector() {
-        stub("presentAdInspector")
+        val activity = getActivity() ?: return
+        runOnHostThread {
+            MobileAds.openAdInspector(activity) { error ->
+                if (error != null) Log.e(TAG, "Ad Inspector error: ${error.message}")
+            }
+        }
     }
 }

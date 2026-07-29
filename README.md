@@ -13,7 +13,7 @@ Native Google Mobile Ads (AdMob) plugin for Godot 4 on iOS, macOS, and Android, 
 
 > **Official docs:** [Google Mobile Ads SDK for iOS](https://firebase.google.com/docs/admob/ios/quick-start) · [Google Mobile Ads SDK for Android](https://developers.google.com/admob/android/quick-start)
 
-> **Android note:** the native Gradle/GDExtension plumbing is in place and `Engine.get_singleton("GodotAdMob")` resolves correctly, but the actual Google Mobile Ads/UMP ad-loading logic is not implemented yet — every method currently logs a warning and emits the matching `_failed` signal (or returns a safe default). See the [tracking issue](https://github.com/zt-pawer/GodotAdMob/issues/1) for the follow-up PR that adds real ad logic.
+> **Android note:** the demo's export preset injects Google's public test AdMob App ID (`ca-app-pub-3940256099942544~3347511713`) via `GodotAdMobExportPlugin.gd` so it works out of the box. Real consumers must override this with their own AdMob App ID in their own export config.
 
 ---
 

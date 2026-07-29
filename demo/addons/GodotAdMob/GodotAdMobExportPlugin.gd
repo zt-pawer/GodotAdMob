@@ -24,3 +24,9 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 	func _get_name() -> String:
 		return _plugin_name
+
+	# Google's public test App ID, so the demo works out of the box.
+	# Real consumers must override this with their own AdMob App ID
+	# (their export config's manifest merge takes precedence).
+	func _get_android_manifest_application_element_contents(platform: EditorExportPlatform, debug: bool) -> String:
+		return "<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"ca-app-pub-3940256099942544~3347511713\"/>"
