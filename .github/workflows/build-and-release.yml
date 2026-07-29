@@ -168,7 +168,7 @@ jobs:
       - name: Install NDK + CMake
         run: |
           set -euo pipefail
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "ndk;$NDK_VERSION" "cmake;$CMAKE_VERSION"
 
