@@ -1,10 +1,10 @@
 # Swift Package Manager
 .build/
 .xcodebuild*/
-*.xcworkspace/xcuserdata/
+apple/*.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
-.swiftpm/xcode/xcuserdata/
-.swiftpm/xcode/package.xcworkspace/xcuserdata/
+apple/.swiftpm/xcode/xcuserdata/
+apple/.swiftpm/xcode/package.xcworkspace/xcuserdata/
 
 # Build artifacts
 dist/
