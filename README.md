@@ -38,6 +38,7 @@ The plugin also ships empty stubs for Linux and Windows so your project compiles
    <key>GADApplicationIdentifier</key>
    <string>ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX</string>
    ```
+5. On Android, override the test `APPLICATION_ID` meta-data `GodotAdMobExportPlugin.gd` injects — either edit that file or add your own `_get_android_manifest_application_element_contents` export plugin with `com.google.android.gms.ads.APPLICATION_ID` set to your real App ID
 
 ---
 
@@ -258,6 +259,12 @@ make android
 ```
 
 This builds `godot-cpp` for `arm64-v8a` (debug + release) via scons, builds the native shim + Kotlin `GodotPlugin` via Gradle/CMake (`android/`), and copies the resulting `.aar`/`.so` files into both `addons/GodotAdMob/bin/android/` and `demo/addons/GodotAdMob/bin/android/`.
+
+---
+
+## Demo
+
+See [`demo/README.md`](demo/README.md) for how to build and run the test project (iOS/macOS/Android) against Google's test ad unit IDs.
 
 ---
 
