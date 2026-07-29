@@ -29,8 +29,8 @@ func _ready() -> void:
 	show_rewarded_interstitial_btn.disabled = true
 	show_app_open_btn.disabled = true
 
-	if ClassDB.class_exists("GodotAdMob"):
-		_admob = ClassDB.instantiate("GodotAdMob")
+	if Engine.has_singleton("GodotAdMob"):
+		_admob = Engine.get_singleton("GodotAdMob")
 
 		_admob.consent_info_updated.connect(_on_consent_info_updated)
 		_admob.consent_info_failed.connect(_on_consent_info_failed)
@@ -63,7 +63,7 @@ func _ready() -> void:
 		_admob.setVolume(0.5)
 		status_label.text = "GodotAdMob Initialized"
 	else:
-		status_label.text = "GodotAdMob not found (iOS only)"
+		status_label.text = "GodotAdMob not found"
 
 func _on_consent_info_updated() -> void:
 	consent_status.text = "Updated. Can Request Ads: " + str(_admob.canRequestAds())

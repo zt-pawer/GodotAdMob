@@ -1,6 +1,6 @@
 # Swift Package Manager
 .build/
-.xcodebuild/
+.xcodebuild*/
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 .swiftpm/xcode/xcuserdata/

@@ -39,7 +39,7 @@ The plugin also ships empty stubs for Linux and Windows so your project compiles
 
 ## API
 
-The class is guarded with `ClassDB.class_exists("GodotAdMob")` — it only exists on iOS/macOS. On other platforms the guard simply skips instantiation.
+`GodotAdMob` is registered as an engine singleton. Guard access with `Engine.has_singleton("GodotAdMob")` — it's currently only available on iOS/macOS, Android support is in progress.
 
 ### `GodotAdMob`
 
@@ -51,9 +51,9 @@ extends Node
 var _admob: Object
 
 func _ready() -> void:
-    if not ClassDB.class_exists("GodotAdMob"):
+    if not Engine.has_singleton("GodotAdMob"):
         return
-    _admob = ClassDB.instantiate("GodotAdMob")
+    _admob = Engine.get_singleton("GodotAdMob")
 
     # Consent
     _admob.consent_info_updated.connect(_on_consent_info_updated)
