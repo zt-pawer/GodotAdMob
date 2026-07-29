@@ -1,6 +1,6 @@
 plugins {
     id("com.android.library") version "8.7.3"
-    id("org.jetbrains.kotlin.android") version "2.0.21"
+    id("org.jetbrains.kotlin.android") version "2.2.0"
 }
 
 // The Android exporter strips any .gdextension config declaring
@@ -64,6 +64,7 @@ tasks.named("preBuild") {
 
 dependencies {
     compileOnly("org.godotengine:godot:4.7.1.stable")
+    implementation("com.google.android.gms:play-services-ads:24.9.0")
 }
 
 // Copies build outputs into the demo's addon bin/ dir, matching the paths
