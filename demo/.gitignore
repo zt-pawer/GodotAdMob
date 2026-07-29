@@ -8,3 +8,6 @@ export/
 # Plugin binaries — install from the latest GitHub release
 addons/GodotAdMob/bin/
 addons/GodotApplePluginsRuntime/bin/
+
+# Android build template — installed via `godot --install-android-build-template`
+android/

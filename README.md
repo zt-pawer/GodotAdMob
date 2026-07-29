@@ -2,25 +2,29 @@
 
 [![Godot](https://img.shields.io/badge/Godot%20Engine-4.2+-blue.svg)](https://github.com/godotengine/godot/)
 [![SwiftGodot](https://img.shields.io/badge/SwiftGodot-pinned-blue.svg)](https://github.com/migueldeicaza/SwiftGodot/)
-![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS-333333.svg?style=flat)
+![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20Android-333333.svg?style=flat)
 ![iOS](https://img.shields.io/badge/iOS-17+-green.svg?style=flat)
 ![macOS](https://img.shields.io/badge/macOS-14+-green.svg?style=flat)
+![Android](https://img.shields.io/badge/Android-arm64--v8a-green.svg?style=flat)
 [![Swift](https://img.shields.io/badge/Swift-6-blue.svg)](https://www.swift.org/)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 
-Native Google Mobile Ads (AdMob) plugin for Godot 4 on iOS, built with Swift and [SwiftGodotRuntime](https://github.com/migueldeicaza/SwiftGodot). Supports banners, interstitials, rewarded, rewarded interstitial, app open ads, and UMP consent forms (GDPR compliance) — signals go directly to your GDScript.
+Native Google Mobile Ads (AdMob) plugin for Godot 4 on iOS, macOS, and Android, built as a v2 GDExtension (Swift + [SwiftGodotRuntime](https://github.com/migueldeicaza/SwiftGodot) on Apple platforms, Kotlin + a native C++ shim on Android). Supports banners, interstitials, rewarded, rewarded interstitial, app open ads, and UMP consent forms (GDPR compliance) — signals go directly to your GDScript.
 
-> **Official docs:** [Google Mobile Ads SDK for iOS](https://firebase.google.com/docs/admob/ios/quick-start)
+> **Official docs:** [Google Mobile Ads SDK for iOS](https://firebase.google.com/docs/admob/ios/quick-start) · [Google Mobile Ads SDK for Android](https://developers.google.com/admob/android/quick-start)
+
+> **Android note:** the native Gradle/GDExtension plumbing is in place and `Engine.get_singleton("GodotAdMob")` resolves correctly, but the actual Google Mobile Ads/UMP ad-loading logic is not implemented yet — every method currently logs a warning and emits the matching `_failed` signal (or returns a safe default). See the [tracking issue](https://github.com/zt-pawer/GodotAdMob/issues/1) for the follow-up PR that adds real ad logic.
 
 ---
 
 ## Requirements
 
-- iOS 17.0 / macOS 14.0
+- iOS 17.0 / macOS 14.0 / Android 7.0+ (API 24, `arm64-v8a` only)
 - Godot 4.2+
-- [GodotApplePlugins](https://github.com/zt-pawer/GodotApplePlugins) installed — provides the shared `SwiftGodotRuntime` the plugin links against
+- [GodotApplePlugins](https://github.com/zt-pawer/GodotApplePlugins) installed — provides the shared `SwiftGodotRuntime` the plugin links against on iOS/macOS
+- Android exports require **`gradle_build/use_gradle_build = true`** in the export preset — required for any `.aar`-based Godot Android plugin to load
 
-The plugin also ships empty stubs for Linux and Windows so your project compiles on those platforms without errors. Ad functionality is iOS-only.
+The plugin also ships empty stubs for Linux and Windows so your project compiles on those platforms without errors.
 
 ---
 
@@ -39,7 +43,7 @@ The plugin also ships empty stubs for Linux and Windows so your project compiles
 
 ## API
 
-`GodotAdMob` is registered as an engine singleton. Guard access with `Engine.has_singleton("GodotAdMob")` — it's currently only available on iOS/macOS, Android support is in progress.
+`GodotAdMob` is registered as an engine singleton on every supported platform (iOS, macOS, Android). Guard access with `Engine.has_singleton("GodotAdMob")`.
 
 ### `GodotAdMob`
 
@@ -234,6 +238,8 @@ func _on_rewarded_closed() -> void:
 
 ## Building from Source
 
+### iOS / macOS
+
 Requires Xcode on macOS. Before building, open the package in Xcode and share the scheme (**Product → Manage Schemes → Shared**) so `xcodebuild` can find it.
 
 ```bash
@@ -242,6 +248,16 @@ make dist
 ```
 
 `make build` compiles xcframeworks for iOS, iOS Simulator, and macOS. `make dist` assembles the `addons/` folder ready to drop into your Godot project.
+
+### Android
+
+Requires the Android SDK (`ANDROID_HOME` set), NDK `28.0.12674087`, CMake `3.31.1`, and the `godot-cpp` submodule (`git submodule update --init godot-cpp`).
+
+```bash
+make android
+```
+
+This builds `godot-cpp` for `arm64-v8a` (debug + release) via scons, builds the native shim + Kotlin `GodotPlugin` via Gradle/CMake (`android/`), and copies the resulting `.aar`/`.so` files into both `addons/GodotAdMob/bin/android/` and `demo/addons/GodotAdMob/bin/android/`.
 
 ---
 

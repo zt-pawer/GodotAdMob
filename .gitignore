@@ -20,8 +20,17 @@ dist/
 # VSCode
 .vscode/
 
+# JetBrains IDEs (Android Studio)
+.idea/
+
 # Demo
 addons/GodotAdMob/bin/
+
+# Android
+android/.gradle/
+android/build/
+android/.cxx/
+android/local.properties
 
 # Others
 docs/
