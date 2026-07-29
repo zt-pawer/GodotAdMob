@@ -324,6 +324,12 @@ jobs:
           name: godot-admob-stubs-windows-arm64
           path: ${{ runner.temp }}/stubs/windows-arm64
 
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: godot-admob-android
+          path: ${{ runner.temp }}/android
+
       - name: Install stubs
         run: |
           set -euo pipefail
@@ -340,6 +346,16 @@ jobs:
           }
           find "$RUNNER_TEMP/stubs" -type f \( -name '*.so' -o -name '*.dll' \) -print0 |
             while IFS= read -r -d '' stub; do install_stub "$stub"; done
+
+      - name: Install Android artifacts
+        run: |
+          set -euo pipefail
+          addon="addons/GodotAdMob/bin/android"
+          mkdir -p "$addon/debug/arm64-v8a" "$addon/release/arm64-v8a"
+          cp "$RUNNER_TEMP/android/outputs/aar/GodotAdMob-debug.aar" "$addon/debug/"
+          cp "$RUNNER_TEMP/android/outputs/aar/GodotAdMob-release.aar" "$addon/release/"
+          cp "$RUNNER_TEMP/android/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/libGodotAdMob.so" "$addon/debug/arm64-v8a/"
+          cp "$RUNNER_TEMP/android/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libGodotAdMob.so" "$addon/release/arm64-v8a/"
 
       - name: Sign macOS frameworks
         if: env.MACOS_CERTIFICATE != ''
