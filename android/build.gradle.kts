@@ -3,6 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.android") version "2.0.21"
 }
 
+// The Android exporter strips any .gdextension config declaring
+// android_aar_plugin = true from the main project PCK (it expects the AAR
+// itself to carry it). Copy the canonical demo copy into this module's own
+// assets so it ends up bundled in the .aar and merged into the final APK.
+val pluginAssetsDir = layout.buildDirectory.dir("generated/assets/godotAdMobPlugin")
+
+tasks.register<Copy>("copyGdextensionConfigToAssets") {
+    from(layout.projectDirectory.file("../demo/addons/GodotAdMob/godot_ad_mob.gdextension"))
+    into(pluginAssetsDir.map { it.dir("addons/GodotAdMob") })
+}
+
 android {
     namespace = "org.godotengine.plugin.godotadmob"
     compileSdk = 34
@@ -39,6 +50,16 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDir(pluginAssetsDir)
+        }
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn("copyGdextensionConfigToAssets")
 }
 
 dependencies {
