@@ -381,12 +381,17 @@ jobs:
       - name: Archive addons
         run: |
           set -euo pipefail
-          PACKAGE_NAME="GodotAdMob-addons-${GITHUB_SHA}.zip"
+          PLUGIN_VERSION="$(grep -oE '^version="[^"]+"' addons/GodotAdMob/plugin.cfg | cut -d'"' -f2)"
+          test -n "$PLUGIN_VERSION"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          PACKAGE_NAME="GodotAdMob-v${PLUGIN_VERSION}-${SHORT_SHA}.zip"
           rm -rf dist && mkdir -p dist/addons
           test -d "addons/GodotAdMob"
           ditto "addons/GodotAdMob" "dist/addons/GodotAdMob"
           ditto -c -k --sequesterRsrc --keepParent dist "$PACKAGE_NAME"
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_ENV"
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> "$GITHUB_ENV"
+          echo "SHORT_SHA=$SHORT_SHA" >> "$GITHUB_ENV"
 
       - name: Notarize
         if: env.MACOS_CERTIFICATE != ''
@@ -405,9 +410,9 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: build-${{ github.sha }}
-          name: Addons build for ${{ github.sha }}
-          body: Automated build triggered by ${{ github.ref }}
+          tag_name: v${{ env.PLUGIN_VERSION }}-${{ env.SHORT_SHA }}
+          name: GodotAdMob v${{ env.PLUGIN_VERSION }} (${{ env.SHORT_SHA }})
+          body: Automated build from commit ${{ github.sha }}
           files: ${{ env.PACKAGE_NAME }}
 
       - name: Clean up signing keychain
