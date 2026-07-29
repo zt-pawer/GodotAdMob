@@ -1,4 +1,4 @@
-.PHONY: build dist
+.PHONY: build dist android
 
 CONFIG ?= Release
 HOST_ARCH ?= $(shell uname -m)
@@ -16,6 +16,9 @@ XCODEBUILD_SETTINGS ?= CODE_SIGNING_ALLOWED=NO OTHER_LDFLAGS=-Wl,-headerpad_max_
 XCODEBUILD_LOG_ON_ERROR ?=
 XCODEBUILD_LOG_DIR ?=
 XCODEBUILD_HEARTBEAT_SECONDS ?= 60
+
+ANDROID_NDK_VERSION ?= 28.0.12674087
+ANDROID_MODULE_NAME ?= GodotAdMob
 
 build:
 	set -e; \
@@ -131,3 +134,17 @@ dist:
 			fi; \
 		fi; \
 	done
+
+android:
+	set -e; \
+	for target in template_debug template_release; do \
+		( cd godot-cpp && scons platform=android target=$$target arch=arm64 \
+			ndk_version=$(ANDROID_NDK_VERSION) -j$$(sysctl -n hw.ncpu 2>/dev/null || nproc) ); \
+	done; \
+	( cd android && ./gradlew assembleDebug assembleRelease copyToDemoAddons ); \
+	addon="$(CURDIR)/addons/$(ANDROID_MODULE_NAME)/bin/android"; \
+	mkdir -p "$$addon/debug/arm64-v8a" "$$addon/release/arm64-v8a"; \
+	cp "android/build/outputs/aar/$(ANDROID_MODULE_NAME)-debug.aar" "$$addon/debug/"; \
+	cp "android/build/outputs/aar/$(ANDROID_MODULE_NAME)-release.aar" "$$addon/release/"; \
+	cp "android/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a/lib$(ANDROID_MODULE_NAME).so" "$$addon/debug/arm64-v8a/"; \
+	cp "android/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/lib$(ANDROID_MODULE_NAME).so" "$$addon/release/arm64-v8a/"
