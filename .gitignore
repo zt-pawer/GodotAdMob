@@ -34,6 +34,7 @@ android/local.properties
 
 # Others
 docs/
+.claude/
 
 # Binaries checked in to bin/ are intentional (xcframework, stubs).
 # Do not add addons/GodotAdMob/bin/ to this file.
