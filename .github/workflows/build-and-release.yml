@@ -3,10 +3,10 @@ name: Build and Release
 on:
   push:
     paths:
-      - 'Sources/**'
+      - 'apple/Sources/**'
       - 'Generated/**'
-      - 'Package.swift'
-      - 'Package.resolved'
+      - 'apple/Package.swift'
+      - 'apple/Package.resolved'
       - 'Makefile'
       - 'android/**'
       - 'godot-cpp'

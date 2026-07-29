@@ -4,7 +4,7 @@ CONFIG ?= Release
 HOST_ARCH ?= $(shell uname -m)
 DESTINATIONS ?= generic/platform=iOS generic/platform=iOS\ Simulator platform=macOS,arch=arm64 platform=macOS,arch=x86_64
 DERIVED_DATA ?= $(CURDIR)/.xcodebuild
-WORKSPACE ?= .swiftpm/xcode/package.xcworkspace
+WORKSPACE ?= apple/.swiftpm/xcode/package.xcworkspace
 MODULE_NAMES ?= GodotAdMob
 RUNTIME_RPATH ?= @loader_path/../../../../../GodotApplePluginsRuntime/bin
 RUNTIME_FRAMEWORK_RPATH ?= @loader_path/../../../GodotApplePluginsRuntime/bin
@@ -52,7 +52,7 @@ build:
 			"$$@"; \
 		fi; \
 	}; \
-	swift build; \
+	swift build --package-path apple; \
 	for dest in $(DESTINATIONS); do \
 		platform_name=`echo "$$dest" | sed -n 's/.*platform=\([^,]*\).*/\1/p'`; \
 		if [ -z "$$platform_name" ]; then platform_name="iOS"; fi; \
