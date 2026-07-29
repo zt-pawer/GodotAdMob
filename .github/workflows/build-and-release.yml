@@ -172,6 +172,9 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "ndk;$NDK_VERSION" "cmake;$CMAKE_VERSION"
 
+      - name: Install scons
+        run: pip install "scons>=4.0"
+
       - name: Build godot-cpp (Android arm64, debug + release)
         run: |
           set -euo pipefail
