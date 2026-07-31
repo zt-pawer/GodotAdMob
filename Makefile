@@ -63,6 +63,10 @@ build:
 		if [ "$$platform_lc" = "macos" ]; then suffix="$$arch_name"; fi; \
 		for module in $(MODULE_NAMES); do \
 			echo "Building $$module for $$dest"; \
+			extra_settings=""; \
+			if [ "$$platform_lc" = "macos" ] && [ "$$arch_name" = "x86_64" ]; then \
+				extra_settings="ARCHS=x86_64 VALID_ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO"; \
+			fi; \
 			run_xcodebuild $(XCODEBUILD) \
 				$(XCODEBUILD_FLAGS) \
 				-workspace '$(WORKSPACE)' \
@@ -70,7 +74,7 @@ build:
 				-configuration '$(CONFIG)' \
 				-destination "$$dest" \
 				-derivedDataPath "$(DERIVED_DATA)$$suffix" \
-				$(XCODEBUILD_SETTINGS) \
+				$(XCODEBUILD_SETTINGS) $$extra_settings \
 				build; \
 			echo "Built $$module for $$dest"; \
 		done; \
