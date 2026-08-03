@@ -26,7 +26,7 @@ let package = Package(
         .library(name: "GodotAdMob", type: .dynamic, targets: ["GodotAdMob"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/migueldeicaza/SwiftGodot", revision: "f528ba67accbe3cca06c1d401c8f9d7c17022f63"),
+        .package(url: "https://github.com/migueldeicaza/SwiftGodot", from: "0.79.0"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0"),
     ],
     targets: [

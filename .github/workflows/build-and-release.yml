@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p .tmp/gdextension
           curl -fsSL \
-            https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/f528ba67accbe3cca06c1d401c8f9d7c17022f63/Sources/GDExtension/include/gdextension_interface.h \
+            https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/2b0e39dc1c23454408f83c0a83ddf9c2516624c0/Sources/GDExtension/include/gdextension_interface.h \
             -o .tmp/gdextension/gdextension_interface.h
 
       - name: Build Linux x64 stubs
@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir -p .tmp/gdextension
           curl -fsSL \
-            https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/f528ba67accbe3cca06c1d401c8f9d7c17022f63/Sources/GDExtension/include/gdextension_interface.h \
+            https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/2b0e39dc1c23454408f83c0a83ddf9c2516624c0/Sources/GDExtension/include/gdextension_interface.h \
             -o .tmp/gdextension/gdextension_interface.h
 
       - name: Build Linux ARM64 stubs
@@ -86,7 +86,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path .tmp/gdextension | Out-Null
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/f528ba67accbe3cca06c1d401c8f9d7c17022f63/Sources/GDExtension/include/gdextension_interface.h" `
+            -Uri "https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/2b0e39dc1c23454408f83c0a83ddf9c2516624c0/Sources/GDExtension/include/gdextension_interface.h" `
             -OutFile ".tmp/gdextension/gdextension_interface.h"
 
       - name: Build Windows x64 stubs
@@ -122,7 +122,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path .tmp/gdextension | Out-Null
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/f528ba67accbe3cca06c1d401c8f9d7c17022f63/Sources/GDExtension/include/gdextension_interface.h" `
+            -Uri "https://raw.githubusercontent.com/migueldeicaza/SwiftGodot/2b0e39dc1c23454408f83c0a83ddf9c2516624c0/Sources/GDExtension/include/gdextension_interface.h" `
             -OutFile ".tmp/gdextension/gdextension_interface.h"
 
       - name: Build Windows ARM64 stubs
